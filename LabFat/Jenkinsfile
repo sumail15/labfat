@@ -4,21 +4,48 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-
+                // Get the latest code from the remote GitHub repository
                 git 'https://github.com/sumail15/labfat.git'
             }
         }
 
         stage('Build') {
             steps {
- 
-                bat 'mvn clean install'
+                // Build the Maven project
+                bat 'start mvn clean install'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                // Build Docker image
+                bat 'start docker build -t your-docker-image-name .'
+            }
+        }
+
+        stage('Push to Docker Repository') {
+            steps {
+                // Push Docker image to the central Docker repository
+                withCredentials([usernamePassword(credentialsId: 'JABINMIC0051', passwordVariable: 'Jabin11/12', usernameVariable: 'JABINVARUGHESE')]) {
+                    bat "start docker login -u ${sumail1415} -p ${atyab2715}"
+                    bat 'start docker push your-docker-image-name'
+                }
+            }
+        }
+
+        stage('Error Handling') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    // This stage will only execute if any of the previous stages fail
+                    error 'There was a failure in the pipeline!'
+                }
             }
         }
     }
 
     post {
         always {
+            // Clean up (optional)
             deleteDir()
         }
     }
