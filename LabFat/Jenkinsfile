@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+
+                git 'https://github.com/sumail15/labfat.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+ 
+                bat 'mvn clean install'
+            }
+        }
+    }
+
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
